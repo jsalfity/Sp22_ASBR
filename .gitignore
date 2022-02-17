@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Special PDFs
+MR-v2.pdf
+mathematical_intro_to_robotics.pdf
