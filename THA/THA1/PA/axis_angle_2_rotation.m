@@ -10,7 +10,7 @@ function R = axis_angle_2_rotation(omega, theta)
                  omega(3)       0        -omega(1);
                  -omega(2)    omega(1)     0      ];
 
-    R = eye(3) + sin(theta) * omega_hat + (1 -  cos(theta))*omega_hat.^2;
+    R = eye(3) + sin(theta) * omega_hat + (1 -  cos(theta))*omega_hat^2;
    
     return
 end

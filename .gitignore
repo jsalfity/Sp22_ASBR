@@ -131,3 +131,6 @@ dmypy.json
 # Special PDFs
 MR-v2.pdf
 mathematical_intro_to_robotics.pdf
+
+# mac OS 
+.DS_Store

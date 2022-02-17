@@ -2,7 +2,7 @@
 function R = quaternion_2_rotation(q)
     % param: q (4x1 quaternion)
     % return: R (3x3 rotation matrix)
-    % reference: ASBR W3L1 pg11
+    % reference: ASBR W3L1 pg11, MR Appendix B.3
 
     q0 = q(1);
     q1 = q(2);
