@@ -18,8 +18,8 @@ eps = 1e-3;
     R = [0.8658  -0.2502  0.4333; 
          0.2502   0.9665  0.0581;
          -0.4333  0.0581  0.8994];
-    [theta, omega] = rotation_2_axis_angle(R);
-    assert(norm(omega - [0;0.866;0.5]) < eps);
+    [theta, omega] = rotation_2_axis_angle(R)
+    assert(abs(omega - [0;0.866 0.5]) < eps);
     assert(abs(theta - 0.524) < eps);
 
 % 1b rotation_2_quaternion
@@ -28,13 +28,10 @@ eps = 1e-3;
 
 % 1c roll-pitch-yaw
 
+
 % 2a axis_angle_2_rotation (MR Example 3.12)
     omega = [0 0.866 0.5];
     theta = 0.524;
-    R = axis_angle_2_rotation(omega, theta);
-    R_book = [0.8658  -0.2502  0.4333; 
-              0.2502   0.9665  0.0581;
-              -0.4333  0.0581  0.8994];
-    assert(norm(R - R_book) < eps);
+    R = axis_angle_2_rotation(omega, theta)
 
 % 2b quaternion_2_rotation
