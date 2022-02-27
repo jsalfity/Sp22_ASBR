@@ -1,0 +1,52 @@
+function [Tfinal] = screw(T, q, shat, h, theta)
+    % param: T (4x4 transformation matrix)
+    % param: s (screw axis  [q, shat, h] in fixed frame s) 
+    % param: theta (total distance traveled along screw axis theta)
+
+    % return: Tfinal
+
+    % reference: ASBR W5L1
+
+    S = [shat; -cross(shat,q)+h*shat];
+    omega = S(1:3);
+    v = S(4:6);
+
+    omega_hat =  [   0         -omega(3)  omega(2);
+                 omega(3)       0        -omega(1);
+                 -omega(2)    omega(1)     0      ];
+
+    Shat = [omega_hat  v;
+            0 0 0      0];
+
+    thetas = [0, theta/4,  theta/2, 3*theta/4, theta];
+
+    for t = thetas
+        T_t = expm(Shat*t)*T;
+        
+        R_t = T_t(1:3,1:3);
+        P_t = [T_t(1,4), T_t(2,4), T_t(3,4)];
+
+        figure(1)
+        % origin frame
+        plot3(0, 0, 0, '.k')
+        hold on
+        line([0 1], [0 0], [0 0], 'Color', 'r')
+        line([0 0], [0 1], [0 0], 'Color', 'g')
+        line([0 0], [0 0], [0 1], 'Color', 'b')
+
+        % rotated frame
+        plot3(P_t(1), P_t(2), P_t(3), '.r')
+        line(([0 1]+P_t(1)), ([0 0]+P_t(2)), ([0 0]+P_t(3)), 'Color', 'r');
+        line(([0 0]+P_t(1)), ([0 1]+P_t(2)), ([0 0]+P_t(3)), 'Color', 'g');
+        line(([0 0]+P_t(1)), ([0 0]+P_t(2)), ([0 1]+P_t(3)), 'Color', 'b');
+
+        grid on
+        xlim([-1 8])
+        ylim([-1 8])
+        zlim([-1 8])
+        
+
+    end
+    Tfinal = 0;
+
+end

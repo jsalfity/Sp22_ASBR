@@ -24,9 +24,9 @@ eps = 1e-3;
 
 % 1b rotation_2_quaternion
     
-% 1c ZYZ
+% 1c rotation_2_ZYZ
 
-% 1c roll-pitch-yaw
+% 1c rotation_2_rpy
 
 % 2a axis_angle_2_rotation (MR Example 3.12)
     omega = [0 0.866 0.5];
@@ -38,3 +38,16 @@ eps = 1e-3;
     assert(norm(R - R_book) < eps);
 
 % 2b quaternion_2_rotation
+
+%% 3 screw axis 
+clear all; close all; clc;
+q = [0,2,0]';
+shat = [0, 0, 1]';
+h = 2;
+theta = pi;
+T = [1 0 0 2;
+     0 1 0 0;
+     0 0 1 0;
+     0 0 0 1];
+
+[Tfinal] = screw(T, q, shat, h, theta);
