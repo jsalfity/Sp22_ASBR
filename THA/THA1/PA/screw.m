@@ -15,13 +15,13 @@ function [Tfinal] = screw(T, q, shat, h, theta)
                  omega(3)       0        -omega(1);
                  -omega(2)    omega(1)     0      ];
 
-    Shat = [omega_hat  v;
-            0 0 0      0];
-
     thetas = [0, theta/4,  theta/2, 3*theta/4, theta];
 
     for t = thetas
-        T_t = expm(Shat*t)*T;
+        theta = t;
+        R = axis_angle_2_rotation(shat,theta);
+        p = (eye(3)*theta+(1-cos(theta))*omega_hat+(theta-sin(theta))*omega_hat^2)*v;
+        T_t = [R p;0 0 0 1]*T;
         
         R_t = T_t(1:3,1:3);
         P_t = [T_t(1,4), T_t(2,4), T_t(3,4)];
@@ -39,6 +39,7 @@ function [Tfinal] = screw(T, q, shat, h, theta)
         line(([0 1]+P_t(1)), ([0 0]+P_t(2)), ([0 0]+P_t(3)), 'Color', 'r');
         line(([0 0]+P_t(1)), ([0 1]+P_t(2)), ([0 0]+P_t(3)), 'Color', 'g');
         line(([0 0]+P_t(1)), ([0 0]+P_t(2)), ([0 1]+P_t(3)), 'Color', 'b');
+        hold on
 
         grid on
         xlim([-1 8])
