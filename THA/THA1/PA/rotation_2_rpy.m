@@ -7,7 +7,7 @@ function [phi, theta, psi] = rotation_2_rpy(R)
     % reference: ASBR W3L1 Pg6
 
     phi = atan2(R(2,1), R(1,1));
-    theta = atan2(-R(3,1), sqrt(R(3,2)^2 + R(3,3)));
-    psi = atan2(R(3,3), R(3,3));
+    theta = atan2(-R(3,1), sqrt(R(3,2)^2 + R(3,3)^2));
+    psi = atan2(R(3,2), R(3,3));
 
 end

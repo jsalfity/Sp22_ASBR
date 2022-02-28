@@ -13,13 +13,3 @@ function q = rotation_2_quaternion(R)
    
     return
 end
-
-function s = sign(x)
-    if x >= 0
-        s = 1;
-    else
-        s = -1;
-    end
-
-    return
-end
