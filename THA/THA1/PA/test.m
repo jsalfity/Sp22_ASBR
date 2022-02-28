@@ -1,6 +1,6 @@
 clc; clear all;
 
-eps = 1e-3;
+eps = getGlobaleps;
 
 % 1a rotation_2_axis_angle
 % To find an axis angle from a rotation matrix:
@@ -17,7 +17,7 @@ eps = 1e-3;
     % case 2
     R = [1 0 0; 0 -1 0; 0 0 -1];
     [theta, omega] = rotation_2_axis_angle(R);
-    assert(theta == pi)
+    assert( abs(theta - pi) < eps)
 
     % case 3 (MR Example 3.12)
     R = [0.8658  -0.2502  0.4333; 
@@ -58,7 +58,7 @@ eps = 1e-3;
 % 1c rotation_2_rpy
 % reference: rotm2eul() provided by matlab
     R = eye(3);
-    [phi, theta, psi] = rotation_2_rpy(R);
+    [phi, theta, psi] = rotation_2_rpy(R, 0);
     angles_matlab = rotm2eul(R);
     assert(norm([angles_matlab(1) - phi; ...
                  angles_matlab(2) - theta; ...
@@ -67,14 +67,14 @@ eps = 1e-3;
     R = [0.8658  -0.2502  0.4333; 
          0.2502   0.9665  0.0581;
          -0.4333  0.0581  0.8994];
-    [phi, theta, psi] = rotation_2_rpy(R);
+    [phi, theta, psi] = rotation_2_rpy(R, 0);
     angles_matlab = rotm2eul(R);
     assert(norm([angles_matlab(1) - phi; ...
                  angles_matlab(2) - theta; ...
                  angles_matlab(3) - psi]) < eps);
 
     R = [0 0 1; 0 1 0; -1 0 0];
-    [phi, theta, psi] = rotation_2_rpy(R);
+    [phi, theta, psi] = rotation_2_rpy(R, 0);
     angles_matlab = rotm2eul(R);
     assert(norm([angles_matlab(1) - phi; ...
                  angles_matlab(2) - theta; ...

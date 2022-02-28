@@ -4,6 +4,15 @@ function [theta, omega] = rotation_2_axis_angle(R)
     % return: omega, theta (axis-angle representation)
     % reference: ASBR notes, W2L2, slide 9. MR Section 3.2
 
+    % check R is in SO(3)
+    if (norm(R) - 1)        > getGlobaleps || ...
+        norm(R*R' - eye(3)) > getGlobaleps || ...
+        (det(R) - 1)    > getGlobaleps
+
+        theta = nan;
+        omega = nan;
+        return
+    end
 
     if R == eye(3)
         theta = 0;

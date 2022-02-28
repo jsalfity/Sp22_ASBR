@@ -4,6 +4,15 @@ function q = rotation_2_quaternion(R)
     % return: q (4x1 quaternion matrix)
     % reference: ASBR W3L1 pg11, MR Appendix B3
 
+    % check R is in SO(3)
+    if (norm(R) - 1)        > getGlobaleps || ...
+        norm(R*R' - eye(3)) > getGlobaleps || ...
+        (det(R) - 1)    > getGlobaleps
+       
+        q = nan;
+        return
+    end
+    
     q0 = 0.5 * sqrt(R(1,1) + R(2,2) + R(3,3) + 1);
     q1 = 0.5 * sign(R(3,2) - R(2,3)) * sqrt(R(1,1) - R(2,2) - R(3,3) + 1);
     q2 = 0.5 * sign(R(1,3) - R(3,1)) * sqrt(R(2,2) - R(3,3) - R(1,1) + 1);
