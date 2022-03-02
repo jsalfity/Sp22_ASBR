@@ -1,6 +1,7 @@
 % PA 1c
 function [phi, theta, psi] = rotation_2_rpy(R, theta_in)
     % param: R (3x3 rotation matrix)
+    % param: theta_in (designates the input angle quadrant
     % return: phi
     % return: theta
     % return: psi 

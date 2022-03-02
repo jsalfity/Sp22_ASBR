@@ -49,7 +49,7 @@ eps = getGlobaleps;
 % 1c rotation_2_ZYZ
 
 
-% 1c rotation_2_rpy
+% 1d rotation_2_rpy
 % reference: rotm2eul() provided by matlab
     R = eye(3);
     [phi, theta, psi] = rotation_2_rpy(R, 0);
