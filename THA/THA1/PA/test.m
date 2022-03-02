@@ -111,3 +111,5 @@ T = [1 0 0 2;
      0 0 0 1];
 
 [Tfinal] = screw(T, q, shat, h, theta);
+
+[s1,theta] = screw_axis(T);
