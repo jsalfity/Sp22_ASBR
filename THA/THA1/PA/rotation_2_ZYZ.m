@@ -7,10 +7,7 @@ function [phi, theta, psi] = rotation_2_ZYZ(R, theta_in)
     % reference: ASBR W3L1 Pg4
 
     % check R is in SO(3)
-    if (norm(R) - 1)        > getGlobaleps || ...
-        norm(R*R' - eye(3)) > getGlobaleps || ...
-        (det(R) - 1)    > getGlobaleps
-
+    if ~RinSO3(R)
         phi = nan;
         theta = nan;
         psi = nan;

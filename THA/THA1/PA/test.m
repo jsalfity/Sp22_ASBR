@@ -46,12 +46,6 @@ eps = getGlobaleps;
     qmatlab = rotm2quat(R);
     assert(norm(q - qmatlab') < eps);
 
-    % !! exception when tr(R) = -1
-%     R = [1 0 0; 0 -1 0; 0 0 1];
-%     q = rotation_2_quaternion(R);
-%     qmatlab = rotm2quat(R);
-%     assert(norm(q - qmatlab') < eps);
-
 % 1c rotation_2_ZYZ
 
 
@@ -105,7 +99,7 @@ eps = getGlobaleps;
     Rmatlab = quat2rotm(q);
     assert(norm(R - Rmatlab) < eps);
 
-% 3 screw axis 
+%% 3 screw axis 
 clear all; close all; clc;
 q = [0,2,0]';
 shat = [0, 0, 1]';

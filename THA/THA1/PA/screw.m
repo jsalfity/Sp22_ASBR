@@ -24,7 +24,7 @@ function [Tfinal] = screw(T, q, shat, h, theta)
     line([0 1], [0 0], [0 0], 'Color', 'r', 'LineStyle', '--')
     line([0 0], [0 1], [0 0], 'Color', 'g', 'LineStyle', '--')
     line([0 0], [0 0], [0 1], 'Color', 'b', 'LineStyle', '--')
-
+    
     for theta_ = thetas
         R = axis_angle_2_rotation(shat,theta_);
         p = (eye(3)*theta_+(1-cos(theta_))*omega_hat+(theta_-sin(theta_))*omega_hat^2)*v;
@@ -38,9 +38,12 @@ function [Tfinal] = screw(T, q, shat, h, theta)
 
         % rotated frame
         plot3(P_t(1), P_t(2), P_t(3), '.r')
-        line(([0 R_t(1,1)]+P_x), ([0 R_t(2,1)]+P_y), ([0 R_t(3,1)]+P_z), 'Color', 'r');
-        line(([0 R_t(1,2)]+P_x), ([0 R_t(2,2)]+P_y), ([0 R_t(3,2)]+P_z), 'Color', 'g');
-        line(([0 R_t(1,3)]+P_x), ([0 R_t(2,3)]+P_y), ([0 R_t(3,3)]+P_z), 'Color', 'b');
+        line(([0 R_t(1,1)]+P_x), ([0 R_t(2,1)]+P_y), ([0 R_t(3,1)]+P_z), ...
+            'Color', 'r', 'LineWidth', 2);
+        line(([0 R_t(1,2)]+P_x), ([0 R_t(2,2)]+P_y), ([0 R_t(3,2)]+P_z), ...
+            'Color', 'g', 'LineWidth', 2);
+        line(([0 R_t(1,3)]+P_x), ([0 R_t(2,3)]+P_y), ([0 R_t(3,3)]+P_z), ...
+            'Color', 'b', 'LineWidth', 2);
         hold on
 
         grid on
@@ -52,10 +55,13 @@ function [Tfinal] = screw(T, q, shat, h, theta)
         ylabel("y-axis")
         zlabel("z-axis")
         legend("Global Origin", ...
+               "Global Frame x-axis", ...
+               "Global Frame y-axis", ...
+               "Global Frame z-axis", ...
+               "Body Frame Origin", ...
                "Body Frame x-axis", ...
                "Body Frame y-axis", ...
-               "Body Frame z-axis", ...
-               "Body Frame Origin")
+               "Body Frame z-axis")
 
     end
     Tfinal = 0;

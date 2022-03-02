@@ -5,10 +5,7 @@ function q = rotation_2_quaternion(R)
     % reference: ASBR W3L1 pg11, MR Appendix B3
 
     % check R is in SO(3)
-    if (norm(R) - 1)        > getGlobaleps || ...
-        norm(R*R' - eye(3)) > getGlobaleps || ...
-        (det(R) - 1)    > getGlobaleps
-       
+    if ~RinSO3(R)
         q = nan;
         return
     end
