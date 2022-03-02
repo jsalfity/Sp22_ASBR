@@ -47,7 +47,28 @@ eps = getGlobaleps;
     assert(norm(q - qmatlab') < eps);
 
 % 1c rotation_2_ZYZ
+    R = eye(3);
+    [phi, theta, psi] = rotation_2_ZYZ(R, -pi/2);
+    angles_matlab = rotm2eul(R, 'ZYZ');
+    assert(norm([angles_matlab(1) - phi; ...
+                 angles_matlab(2) - theta; ...
+                 angles_matlab(3) - psi]) < eps);
+    
+    R = [0.8658  -0.2502  0.4333; 
+         0.2502   0.9665  0.0581;
+         -0.4333  0.0581  0.8994];
+    [phi, theta, psi] = rotation_2_ZYZ(R, -pi/2);
+    angles_matlab = rotm2eul(R, 'ZYZ');
+    assert(norm([angles_matlab(1) - phi; ...
+                 angles_matlab(2) - theta; ...
+                 angles_matlab(3) - psi]) < eps);
 
+    R = [0 0 1; 0 1 0; -1 0 0];
+    [phi, theta, psi] = rotation_2_ZYZ(R, -pi/2);
+    angles_matlab = rotm2eul(R, 'ZYZ');
+    assert(norm([angles_matlab(1) - phi; ...
+                 angles_matlab(2) - theta; ...
+                 angles_matlab(3) - psi]) < eps);
 
 % 1d rotation_2_rpy
 % reference: rotm2eul() provided by matlab
@@ -106,7 +127,7 @@ q = [0,2,0]';
 shat = [0, 0, 1]';
 h = 2;
 theta = pi;
-T = [1 0 0 0;
+T = [1 0 0 2;
      0 1 0 0;
      0 0 1 0;
      0 0 0 1];
