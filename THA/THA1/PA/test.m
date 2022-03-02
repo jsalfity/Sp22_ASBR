@@ -1,5 +1,5 @@
 clc; clear all;
-
+set(0, 'DefaultFigureColor', 'w')
 eps = getGlobaleps;
 
 % 1a rotation_2_axis_angle
@@ -101,11 +101,12 @@ eps = getGlobaleps;
 
 %% 3 screw axis 
 clear all; close all; clc;
+set(0, 'DefaultFigureColor', 'w')
 q = [0,2,0]';
 shat = [0, 0, 1]';
 h = 2;
 theta = pi;
-T = [1 0 0 2;
+T = [1 0 0 0;
      0 1 0 0;
      0 0 1 0;
      0 0 0 1];
