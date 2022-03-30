@@ -5,7 +5,7 @@ function [T] = FK_body(robot, input_thetas)
 %   param: thetas (1xn_joints array
 %   return: T_final
 
-%   reference:
+%   reference: MR 4.1.3
 
     figure(1)
     % plot origin frame
@@ -22,7 +22,8 @@ function [T] = FK_body(robot, input_thetas)
         %%%%%% TODO
         %%%%% plot screw axis for T %%%%%
 
-        S = robot.screw_axes(:, :, idx);
+        s = robot.body.screw_axes(:, :, idx);
+        S = screw_axis_2_se3(s);
         % q = robot.qs(:, :, idx);
         theta = input_thetas(idx);
 

@@ -4,7 +4,7 @@ function [T] = FK_space(robot, input_thetas)
 %   param: thetas (1xn_joints array
 %   return: T_final
 
-%   reference:
+%   reference: MR 4.1.1
 
     figure(1)
     % plot origin frame
@@ -21,8 +21,9 @@ function [T] = FK_space(robot, input_thetas)
         %%%%%% TODO
         %%%%% plot screw axis for T %%%%%
 
-        S = robot.screw_axes(:, :, idx);
-        % q = robot.qs(:, :, idx);
+        s = robot.space.screw_axes(:, :, idx);
+        S = screw_axis_2_se3(s);
+        % q = robot.space.qs(:, :, idx);
         theta = input_thetas(idx);
 
         % calculate the next transformation
