@@ -19,6 +19,10 @@ panda.qs(:,:,5) = [0 0 1.033];
 panda.qs(:,:,6) = [0 0 1.033];
 panda.qs(:,:,7) = [0.088 0 1.033];
 
-% FK_space.m
 input_thetas = [0, 0, 0, 0, 0, 0, 0];
+
+% FK_space.m
 FK_space(panda, input_thetas);
+
+% FK_body.m
+FK_body(panda, input_thetas);
