@@ -13,5 +13,5 @@ function [mu2] = J_condition(A)
     eval_min = min(evals);
     eval_max = max(evals);
 
-    mu1 = eval_max / eval_min;
+    mu2 = eval_max / eval_min;
 end

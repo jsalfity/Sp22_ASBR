@@ -1,7 +1,8 @@
-function [] = ellipsoid_plot_angular(robot, input_thetas)
+function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, input_thetas)
 %ellipsoid_plot_angular
 %   param: robot (struct with n_joints, M, screw_axes, qs)
 %   param: thetas (1xn) joints array
+%   return: isotropy, condition, volume (floats)
 
 %   reference: MR 5.4
 
@@ -9,6 +10,11 @@ function [] = ellipsoid_plot_angular(robot, input_thetas)
     Js = J_space(robot, input_thetas);
     A = Js(1:3,:)*Js(1:3,:)';
     [V, D] = eig(A);
+
+    % calculate isotropy, condition, volume
+    isotropy = J_isotropy(A);
+    condition = J_condition(A);
+    volume = J_ellipsoid_volume(A);
 
     % centered at zero with axis length equal to sqrt(eigenvalues)
     [X, Y, Z] = ellipsoid(0,0,0, sqrt(D(1,1)), sqrt(D(2,2)), sqrt(D(3,3)));

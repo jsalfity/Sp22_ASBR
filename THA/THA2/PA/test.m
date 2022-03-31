@@ -4,9 +4,10 @@ set(0, 'DefaultFigureColor', 'w')
 % % Panda Robot struct containing relevant kinematic info
 run('make_panda.m') % panda robot struct
 
-input_thetas = [0, 0, 0, 0, 0, 0, 0];
+input_thetas = [0, 0.1, 0, 0, 0, 0, 0.1];
 % % FK_space.m
 T_final = FK_space(panda, input_thetas)
+close all;
 
 % % FK_body.m
 T_final = FK_body(panda, input_thetas)
@@ -24,3 +25,5 @@ ellipsoid_plot_angular(panda, input_thetas)
 
 % plot linear manipulabilty ellipsoid
 ellipsoid_plot_linear(panda, input_thetas)
+
+% 
