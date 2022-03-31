@@ -16,3 +16,11 @@ Js = J_space(panda, input_thetas)
 
 % J_body.m
 Jb = J_body(panda, input_thetas)
+
+% singularity test
+
+% plot angular manipulability ellipsoid
+ellipsoid_plot_angular(panda, input_thetas)
+
+% plot linear manipulabilty ellipsoid
+ellipsoid_plot_linear(panda, input_thetas)
