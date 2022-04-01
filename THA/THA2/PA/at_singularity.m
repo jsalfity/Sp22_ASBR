@@ -5,6 +5,6 @@ function [output] = at_singularity(robot, input_thetas)
 %   return: output (bool)
 
     Js = J_space(robot, input_thetas);
-    output = (rank(Js) < robot.n_joints);
+    output = (rank(Js) < 6);
 
 end

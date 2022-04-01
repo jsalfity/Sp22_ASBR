@@ -32,8 +32,8 @@ function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, input_the
     rotate(hsurf, direction, theta)
     direction = [0 0 1]; %rotate the surface plot phi degrees around its z-axis
     rotate(hsurf, direction, phi)
-    xlabel('omega_1');
-    ylabel('omega_2');
-    zlabel('omega_3');
+    xlabel('\omega_1');
+    ylabel('\omega_2');
+    zlabel('\omega_3');
 
 end
