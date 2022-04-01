@@ -5,6 +5,15 @@ panda.M = [1 0 0 0.088; ...
            0 0 -1 0.926; ...
            0 0 0 1];
 
+% q_panda_matlab_home = [0 0 0 -1.5708 0 0 0 0 0 ];
+% T = getTransform(panda_matlab, q_panda_matlab_home, 'panda_link7');
+% M = inv(T)
+% panda.M =   [0   0   -1    0.6435;
+%              0   -1   0    0;
+%             -1   0    0    0.4665;
+%              0   0    0    1.0000];
+
+
 panda.space.screw_axes(:,:,1) = [0; 0; 1;     0;      0;      0];
 panda.space.screw_axes(:,:,2) = [0; 1; 0;     -0.333; 0;      0];
 panda.space.screw_axes(:,:,3) = [0; 0; 1;     0;      0;      0];

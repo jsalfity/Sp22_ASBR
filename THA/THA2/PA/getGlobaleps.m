@@ -1,3 +1,3 @@
 function eps = getGlobaleps
-    eps = 1e-3;
+    eps = 0.1;
 return 
