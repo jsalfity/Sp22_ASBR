@@ -31,9 +31,9 @@ panda.space.screw_axes(:,:,7) = [0; 0; -1;    0;    0.088;   0];
 % panda.space.qs(:,:,7) = [0.088; 0; 1.033];
 
 panda.body.screw_axes(:,:,1) = [0; 0; -1;     0;      -0.088;      0];
-panda.body.screw_axes(:,:,2) = [0; -1; 0;     0.593;    0;         0.88];
+panda.body.screw_axes(:,:,2) = [0; -1; 0;     0.593;    0;         0.088];
 panda.body.screw_axes(:,:,3) = [0; 0; -1;     0;      -0.088;      0];
-panda.body.screw_axes(:,:,4) = [0; 1; 0;    -0.277;     0;      -0.088];
+panda.body.screw_axes(:,:,4) = [0; 1; 0;    -0.277;     0;         0];
 panda.body.screw_axes(:,:,5) = [0; 0; -1;     0;      -0.088;      0 ];
 panda.body.screw_axes(:,:,6) = [0; 1; 0;    0.107;       0;      -0.088];
 panda.body.screw_axes(:,:,7) = [0; 0;  1;    0;         0;   0];
