@@ -1,9 +1,9 @@
-function [q, idx] = J_inverse_kinematics(robot, Ti, Tf, q0, max_iterations)
+function [q, idx] = J_inverse_kinematics(robot, Tf, q0, max_iterations)
 %J_inverse_kinematics Summary of this function goes here
 %   param: robot (struct with n_joints, M, screw_axes, qs)
-%   param: Ti   (Initial Transformation)
 %   param: Tf   (Final Transformation)
-%   param: theta0
+%   param: q0
+%   param: max_iterations
 
 %   reference: MR 6.2.2
 

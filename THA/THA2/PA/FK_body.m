@@ -1,4 +1,4 @@
-function [T] = FK_body(robot, input_thetas, viz)
+function [T] = FK_body(robot, q, viz)
 %FK_body calculates the forward kinematics with matrix exponential in body
 % frame
 %   param: robot (struct with n_joints, M, screw_axes, qs)
@@ -8,13 +8,18 @@ function [T] = FK_body(robot, input_thetas, viz)
 %   reference: MR 4.1.3
 
     if viz
-        figure(2)
+        figure
         % plot origin frame
         plot_handle(1) = plot3(0, 0, 0, '.k');
         hold on
-        plot_handle(2) = line([0 0.1], [0 0], [0 0], 'Color', 'r', 'LineStyle', '--');
-        plot_handle(3) =line([0 0], [0 0.1], [0 0], 'Color', 'g', 'LineStyle', '--');
-        plot_handle(4) = line([0 0], [0 0], [0 0.1], 'Color', 'b', 'LineStyle', '--');
+        plot_handle(2) = line([0 0.1], [0 0], [0 0], ...
+                              'Color', 'r', 'LineStyle', '--');
+        plot_handle(3) = line([0 0], [0 0.1], [0 0], ...
+                               'Color', 'g', 'LineStyle', '--');
+        plot_handle(4) = line([0 0], [0 0], [0 0.1], ...
+                               'Color', 'b', 'LineStyle', '--');
+        axis equal
+        grid on
     end
 
     % perform space form of exponential products
@@ -27,10 +32,11 @@ function [T] = FK_body(robot, input_thetas, viz)
         s = robot.body.screw_axes(:, :, idx);
         S = screw_axis_2_se3(s);
         % q = robot.qs(:, :, idx);
-        theta = input_thetas(idx);
+        theta = q(idx);
 
         % calculate the next transformation
         T = T*expm(S*theta);
+
 
         if viz
             R_t = T(1:3,1:3);
@@ -38,7 +44,7 @@ function [T] = FK_body(robot, input_thetas, viz)
             P_x = P_t(1);
             P_y = P_t(2);
             P_z = P_t(3);
-    
+
             % plot rotated frame
             plot_handle(5) = line((0.1*[0 R_t(1,1)]+P_x), ...
                                   (0.1*[0 R_t(2,1)]+P_y), ...
@@ -52,17 +58,15 @@ function [T] = FK_body(robot, input_thetas, viz)
                                   (0.1*[0 R_t(2,3)]+P_y), ...
                                   (0.1*[0 R_t(3,3)]+P_z), ...
                                     'Color', 'b', 'LineWidth', 2);
-            hold on
         end
 
     end
 
     if viz
+        title('FK\_body')
         xlabel('x-axis')
         ylabel('y-axis')
         zlabel('z-axis')
-        grid on
-        axis equal
         legend(plot_handle([1, 2, 3, 4, 5, 6, 7]), ...
                {'Global Origin', ...
                'Global Frame x-axis', ...

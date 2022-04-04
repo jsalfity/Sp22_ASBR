@@ -1,19 +1,25 @@
-function [T] = FK_space(robot, input_thetas, viz)
+function [T] = FK_space(robot, q, viz)
 %FK_space calculates the forward kinematics with matrix exponential
-%   param: robot (struct with n_joints, M, screw_axes, qs)
-%   param: thetas (1xn_joints array
+%   param: robot (struct: n_joints, M, screw_axes, screw_axes_q)
+%   param: q (1xn) joints array
+%   param: viz (bool) visualization flag
 %   return: T_final
 
 %   reference: MR 4.1.1
 
     if viz
-        figure(1)
+        figure
         % plot origin frame
         plot_handle(1) = plot3(0, 0, 0, '.k');
         hold on
-        plot_handle(2) = line([0 0.1], [0 0], [0 0], 'Color', 'r', 'LineStyle', '--');
-        plot_handle(3) =line([0 0], [0 0.1], [0 0], 'Color', 'g', 'LineStyle', '--');
-        plot_handle(4) = line([0 0], [0 0], [0 0.1], 'Color', 'b', 'LineStyle', '--');
+        plot_handle(2) = line([0 0.1], [0 0], [0 0], ...
+                                'Color', 'r', 'LineStyle', '--');
+        plot_handle(3) = line([0 0], [0 0.1], [0 0], ...
+                                'Color', 'g', 'LineStyle', '--');
+        plot_handle(4) = line([0 0], [0 0], [0 0.1], ...
+                                'Color', 'b', 'LineStyle', '--');
+        axis equal
+        grid on
     end
 
     % perform space form of exponential products
@@ -25,8 +31,8 @@ function [T] = FK_space(robot, input_thetas, viz)
 
         s = robot.space.screw_axes(:, :, idx);
         S = screw_axis_2_se3(s);
-        % q = robot.space.qs(:, :, idx);
-        theta = input_thetas(idx);
+        % q = robot.space.screw_axes_q(:, :, idx);
+        theta = q(idx);
 
         % calculate the next transformation
         T = expm(S*theta)*T;
@@ -37,7 +43,7 @@ function [T] = FK_space(robot, input_thetas, viz)
             P_x = P_t(1);
             P_y = P_t(2);
             P_z = P_t(3);
-    
+
             % plot rotated frame
             plot_handle(5) = line((0.1*[0 R_t(1,1)]+P_x), ...
                                   (0.1*[0 R_t(2,1)]+P_y), ...
@@ -51,17 +57,15 @@ function [T] = FK_space(robot, input_thetas, viz)
                                   (0.1*[0 R_t(2,3)]+P_y), ...
                                   (0.1*[0 R_t(3,3)]+P_z), ...
                                     'Color', 'b', 'LineWidth', 2);
-            hold on
         end
 
     end
 
     if viz
+        title('FK\_space')
         xlabel('x-axis')
         ylabel('y-axis')
         zlabel('z-axis')
-        grid on
-        axis equal
         legend(plot_handle([1, 2, 3, 4, 5, 6, 7]), ...
                {'Global Origin', ...
                'Global Frame x-axis', ...
