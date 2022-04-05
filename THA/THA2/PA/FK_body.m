@@ -40,6 +40,9 @@ function [T] = FK_body(robot, q, init_pose, viz)
         axis equal
         grid on
 
+        last_X = 0;
+        last_Y = 0;
+        last_Z = 0;
         for idx = 1: robot.n_joints
             t_1 = robot.body.t((idx-1)*4+1:idx*4,:);
             t_2 = t_1;
@@ -68,6 +71,12 @@ function [T] = FK_body(robot, q, init_pose, viz)
                                   (0.1*[0 R_t(2,3)]+P_y), ...
                                   (0.1*[0 R_t(3,3)]+P_z), ...
                                     'Color', 'b', 'LineWidth', 2);
+            
+            % plot link from last [P_x, P_y, P_z]
+            line([last_X P_x], [last_Y P_y], [last_Z P_z]);
+            last_X = P_x;
+            last_Y = P_y;
+            last_Z = P_z;
         end
 
         title('FK\_body')

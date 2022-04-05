@@ -11,8 +11,8 @@ panda_matlab = loadrobot('frankaEmikaPanda', 'DataFormat','column');
 % make 1x9 to make compatible with panda_matlab.
 % note that our functions only use 1x7
 % q = [0 0 0 0 0 0 0 0 0]';
-% q = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0, 0]';
-q = [1.3342, -0.5504, 0.4871, -2.7483, 2.3544, 3.2988, 1.8413, 0.0104, 0.0238]';
+q = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0, 0]';
+% q = [1.3342, -0.5504, 0.4871, -2.7483, 2.3544, 3.2988, 1.8413, 0.0104, 0.0238]';
 
 % % singularity test
 % display(at_singularity(panda, q))
@@ -25,12 +25,12 @@ show(panda_matlab, q, 'Visuals','off')
 % FK_space.m
 T_final = FK_space(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
-assert(norm(T_final_matlab - T_final) > eps)
+assert(norm(T_final_matlab - T_final) < eps)
 
 % FK_body.m
 T_final = FK_body(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
-assert(norm(T_final_matlab - T_final) > eps)
+assert(norm(T_final_matlab - T_final) < eps)
 
 % J_space.m
 Js = J_space(panda, q)
