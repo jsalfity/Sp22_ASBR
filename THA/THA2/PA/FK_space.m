@@ -75,12 +75,9 @@ function [T] = FK_space(robot, q, init_pose, viz)
             last_X = P_x;
             last_Y = P_y;
             last_Z = P_z;
-            
+
         end
 
-    end
-
-    if viz
         title('FK\_space')
         xlabel('x-axis')
         ylabel('y-axis')
