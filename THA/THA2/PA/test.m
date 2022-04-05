@@ -23,14 +23,12 @@ axis equal
 show(panda_matlab, q, 'Visuals','off')
 
 % FK_space.m
-T_final = FK_space(panda, q, 1)
+T_final = FK_space(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
 
 % FK_body.m
-T_final = FK_body(panda, q, 1)
+T_final = FK_body(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
-
-
 
 % J_space.m
 Js = J_space(panda, q)
@@ -41,13 +39,11 @@ Jb = J_body(panda, q);
 % assert(norm(Adjoint(panda.M)*Jb - Js) < );
 
 
-
 % plot angular manipulability ellipsoid
 ellipsoid_plot_angular(panda, q)
 
 % plot linear manipulabilty ellipsoid
 ellipsoid_plot_linear(panda, q)
-
 
 
 % J_inverse_kinematics
@@ -60,12 +56,37 @@ Tf = [1 0 0 0.029;
       0 0 -1 0.8; 
       0 0 0 1];
 q0 = [0 0 0 0 0 0 0]';
-[q, idx] = J_inverse_kinematics(panda, Tf, q0, 200)
+[q_inverse, idx_inverse, e_inverse] = J_inverse_kinematics(panda, Ti, Tf, q0, 200);
 Jb = J_body(panda, q);
 
-T_final_matlab = getTransform(panda_matlab, [q;0;0], 'panda_link8')
-% assert(norm(Tf - T_final_matlab) < eps)
+% J_transpose_kinematics
+% NOTE!! The Lyapunov method using J_transpose takes significantly long
+% iterations to converge than the J_inverse method under this initial and
+% final confiugrations. It makes sense since the Lyapunov stability
+% condition only guarantees an asymptotic stability. In order to decrease
+% the number of iterations, we can also compare the difference of two
+% consecutive errors and set a threshold. However, for a fair comparison,
+% we might want to keep this consistent with the J_inverse method, and we
+% can mention this in our report.
+[q_transpose, idx_transpose, e_transpose] = J_transpose_kinematics(panda, Ti, Tf, q0, 0.1, 5000);
+
+% Convergence plot for a more explicit comparison between J transpose and J
+% inverse
 figure
-show(panda_matlab, [q;0;0]);
+subplot(1,2,1)
+plot(e_inverse)
+xlabel('iteration')
+ylabel('error norm')
+title('J inverse')
+subplot(1,2,2)
+plot(e_transpose)
+xlabel('iteration')
+ylabel('error norm')
+title('J transpose')
+
+% T_final_matlab = getTransform(panda_matlab, [q;0;0], 'panda_link8')
+% assert(norm(Tf - T_final_matlab) < eps)
+% figure
+% show(panda_matlab, [q;0;0]);
 
 
