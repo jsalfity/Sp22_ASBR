@@ -1,11 +1,28 @@
-function [T] = FK_space(robot, q, viz)
+function [T] = FK_space(robot, q, init_pose, viz)
 %FK_space calculates the forward kinematics with matrix exponential
 %   param: robot (struct: n_joints, M, screw_axes, screw_axes_q)
 %   param: q (1xn) joints array
+%   param: init_pose (initial position of the end effector)
 %   param: viz (bool) visualization flag
 %   return: T_final
 
 %   reference: MR 4.1.1
+
+    % perform space form of exponential products
+    % iterate through list in reverse
+    T = init_pose;
+    for idx = robot.n_joints: -1: 1
+        %%%%%% TODO
+        %%%%% plot screw axis for T %%%%%
+
+        s = robot.space.screw_axes(:, :, idx);
+        S = screw_axis_2_se3(s);
+        % q = robot.space.screw_axes_q(:, :, idx);
+        theta = q(idx);
+
+        % calculate the next transformation
+        T = expm(S*theta)*T;
+    end
 
     if viz
         figure
@@ -20,26 +37,17 @@ function [T] = FK_space(robot, q, viz)
                                 'Color', 'b', 'LineStyle', '--');
         axis equal
         grid on
-    end
 
-    % perform space form of exponential products
-    % iterate through list in reverse
-    T = robot.M;
-    for idx = robot.n_joints: -1: 1
-        %%%%%% TODO
-        %%%%% plot screw axis for T %%%%%
-
-        s = robot.space.screw_axes(:, :, idx);
-        S = screw_axis_2_se3(s);
-        % q = robot.space.screw_axes_q(:, :, idx);
-        theta = q(idx);
-
-        % calculate the next transformation
-        T = expm(S*theta)*T;
-
-        if viz
-            R_t = T(1:3,1:3);
-            P_t = [T(1,4), T(2,4), T(3,4)];
+        for idx = 1: robot.n_joints
+            t_1 = robot.space.t((idx-1)*4+1:idx*4,:);
+            for y = idx:-1:1
+                s = robot.space.screw_axes(:, :, y);
+                S = screw_axis_2_se3(s);
+                theta = q(y);
+                t_1 = expm(S*theta)*t_1;
+            end
+            R_t = t_1(1:3,1:3);
+            P_t = [t_1(1,4), t_1(2,4), t_1(3,4)];
             P_x = P_t(1);
             P_y = P_t(2);
             P_z = P_t(3);

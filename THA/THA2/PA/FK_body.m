@@ -1,11 +1,30 @@
-function [T] = FK_body(robot, q, viz)
+function [T] = FK_body(robot, q, init_pose, viz)
 %FK_body calculates the forward kinematics with matrix exponential in body
 % frame
 %   param: robot (struct with n_joints, M, screw_axes, qs)
-%   param: thetas (1xn_joints array
+%   param: q (1xn) joint angle array)
+%   param: init_pose (initial position of the end effector)
+%   param: viz (bool) visualization flag
 %   return: T_final
 
 %   reference: MR 4.1.3
+    
+    % perform space form of exponential products
+    % iterate through list in reverse
+    T = init_pose;
+    for idx = 1:robot.n_joints
+        %%%%%% TODO
+        %%%%% plot screw axis for T %%%%%
+
+        s = robot.body.screw_axes(:, :, idx);
+        S = screw_axis_2_se3(s);
+        % q = robot.qs(:, :, idx);
+        theta = q(idx);
+
+        % calculate the next transformation
+        T = T*expm(S*theta);
+
+    end
 
     if viz
         figure
@@ -20,27 +39,18 @@ function [T] = FK_body(robot, q, viz)
                                'Color', 'b', 'LineStyle', '--');
         axis equal
         grid on
-    end
 
-    % perform space form of exponential products
-    % iterate through list in reverse
-    T = robot.M;
-    for idx = 1:robot.n_joints
-        %%%%%% TODO
-        %%%%% plot screw axis for T %%%%%
-
-        s = robot.body.screw_axes(:, :, idx);
-        S = screw_axis_2_se3(s);
-        % q = robot.qs(:, :, idx);
-        theta = q(idx);
-
-        % calculate the next transformation
-        T = T*expm(S*theta);
-
-
-        if viz
-            R_t = T(1:3,1:3);
-            P_t = [T(1,4), T(2,4), T(3,4)];
+        for idx = 1: robot.n_joints
+            t_1 = robot.body.t((idx-1)*4+1:idx*4,:);
+            t_2 = t_1;
+            for y = 1:idx
+                s = Adjoint(inv(t_2))*robot.space.screw_axes(:, :, y);
+                S = screw_axis_2_se3(s);
+                theta = q(y);
+                t_1 = t_1*expm(S*theta);
+            end
+            R_t = t_1(1:3,1:3);
+            P_t = [t_1(1,4), t_1(2,4), t_1(3,4)];
             P_x = P_t(1);
             P_y = P_t(2);
             P_z = P_t(3);
@@ -60,9 +70,6 @@ function [T] = FK_body(robot, q, viz)
                                     'Color', 'b', 'LineWidth', 2);
         end
 
-    end
-
-    if viz
         title('FK\_body')
         xlabel('x-axis')
         ylabel('y-axis')
