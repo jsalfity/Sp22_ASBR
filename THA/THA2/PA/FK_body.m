@@ -55,8 +55,9 @@ function [T] = FK_body(robot, q, init_pose, viz)
     if viz
         for idx = 1: robot.n_joints
             t_1 = t((idx-1)*4+1:idx*4,:);
+            t_2 = t_1;
             for y = 1:idx
-                s = robot.body.screw_axes(:, :, y);
+                s = Adjoint(inv(t_2))*robot.space.screw_axes(:, :, y);
                 S = screw_axis_2_se3(s);
                 theta = q(y);
                 t_1 = t_1*expm(S*theta);
