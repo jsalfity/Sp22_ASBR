@@ -8,32 +8,8 @@ function [T] = FK_space(robot, q, init_pose, viz)
 
 %   reference: MR 4.1.1
 
-    if viz
-        figure
-        % plot origin frame
-        plot_handle(1) = plot3(0, 0, 0, '.k');
-        hold on
-        plot_handle(2) = line([0 0.1], [0 0], [0 0], ...
-                                'Color', 'r', 'LineStyle', '--');
-        plot_handle(3) = line([0 0], [0 0.1], [0 0], ...
-                                'Color', 'g', 'LineStyle', '--');
-        plot_handle(4) = line([0 0], [0 0], [0 0.1], ...
-                                'Color', 'b', 'LineStyle', '--');
-%         axis equal
-        grid on
-    end
-
     % perform space form of exponential products
     % iterate through list in reverse
-    % M for each joint (treat each end joint as an end effector)
-    t = zeros(28,4);
-    t(1:4,:) = [1 0 0 0;0 1 0 0;0 0 1 0.333;0 0 0 1];
-    t(5:8,:) = [1 0 0 0;0 0 1 0;0 -1 0 0.333;0 0 0 1];
-    t(9:12,:) = [1 0 0 0;0 1 0 0;0 0 1 0.649;0 0 0 1];
-    t(13:16,:) = [1 0 0 0.088;0 0 -1 0;0 1 0 0.649;0 0 0 1];
-    t(17:20,:) = [1 0 0 0;0 1 0 0;0 0 1 1.033;0 0 0 1];
-    t(21:24,:) = [1 0 0 0;0 0 -1 0;0 1 0 1.033;0 0 0 1];
-    t(25:28,:) = robot.M;
     T = init_pose;
     for idx = robot.n_joints: -1: 1
         %%%%%% TODO
@@ -47,10 +23,23 @@ function [T] = FK_space(robot, q, init_pose, viz)
         % calculate the next transformation
         T = expm(S*theta)*T;
     end
-    
+
     if viz
+        figure
+        % plot origin frame
+        plot_handle(1) = plot3(0, 0, 0, '.k');
+        hold on
+        plot_handle(2) = line([0 0.1], [0 0], [0 0], ...
+                                'Color', 'r', 'LineStyle', '--');
+        plot_handle(3) = line([0 0], [0 0.1], [0 0], ...
+                                'Color', 'g', 'LineStyle', '--');
+        plot_handle(4) = line([0 0], [0 0], [0 0.1], ...
+                                'Color', 'b', 'LineStyle', '--');
+        axis equal
+        grid on
+
         for idx = 1: robot.n_joints
-            t_1 = t((idx-1)*4+1:idx*4,:);
+            t_1 = robot.space.t((idx-1)*4+1:idx*4,:);
             for y = idx:-1:1
                 s = robot.space.screw_axes(:, :, y);
                 S = screw_axis_2_se3(s);

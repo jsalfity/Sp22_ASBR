@@ -21,7 +21,7 @@ function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, input_the
     % rotation comes from eigenvectors
     [phi, theta, psi] = rotation_2_rpy(V, 0);
 
-    figure(100)
+    figure
     hsurf = surf(X, Y, Z);
     axis equal
 

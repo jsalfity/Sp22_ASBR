@@ -1,6 +1,6 @@
 clc; clear all; close all;
 set(0, 'DefaultFigureColor', 'w')
-eps = getGlobaleps;
+eps = 0.01;
 
 
 % % Panda Robot struct containing relevant kinematic info
@@ -25,10 +25,12 @@ show(panda_matlab, q, 'Visuals','off')
 % FK_space.m
 T_final = FK_space(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
+assert(norm(T_final_matlab - T_final) > eps)
 
 % FK_body.m
 T_final = FK_body(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
+assert(norm(T_final_matlab - T_final) > eps)
 
 % J_space.m
 Js = J_space(panda, q)
