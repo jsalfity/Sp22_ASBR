@@ -1,11 +1,16 @@
-function [q, idx, e] = J_inverse_kinematics(robot, Ti, Tf, q0, max_iterations)
-%J_inverse_kinematics Summary of this function goes here
+function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, K)
+%redundancy_resolution Summary of this function goes here
 %   param: robot (struct with n_joints, M, screw_axes, qs)
 %   param: Ti   (Initial Transformation)
 %   param: Tf   (Final Transformation)
-%   param: q0
+%   param: q0   (Initial joint angle guess)
+%   param: K    (Weighting matrix for manipulabilty)
 
-%   reference: MR 6.2.2
+%   return: q (final joint angles)
+%   return: idx (n_iterations completed)
+%   return: e (error array)
+
+%   reference: ASBR W10L1
 
     % initialization
     q = q0;
@@ -19,13 +24,21 @@ function [q, idx, e] = J_inverse_kinematics(robot, Ti, Tf, q0, max_iterations)
 
     idx = 0;
 
-    e = zeros(1,max_iterations+1);
+    e = zeros(1, max_iterations+1);
 
     while (norm(omega) > getGlobaleps ...
           || norm(v) > getGlobaleps)  ...
           && idx < max_iterations
 
-        q = q + pinv(J_body(robot, q))*V_b;
+        % calculate useful quantities to be used in update equation
+        Jb = J_body(robot, q);
+        A = Jb * Jb';
+        dot_q = K * ((1/2) * ( 1/sqrt(det(A)) ) ... 
+                        * det(A) * trace(pinv(A) * gradient(A)))';
+
+        % update equation
+        q = q + pinv(Jb)*V_b + ...
+            (eye(robot.n_joints) - pinv(Jb)*Jb) * dot_q;
 
         T_bd = FK_body(robot, q, Ti, 0) \  T_sd;
 
