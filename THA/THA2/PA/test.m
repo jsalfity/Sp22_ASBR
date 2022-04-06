@@ -58,9 +58,10 @@ Tf = [1 0 0 0.029;
       0 -1 0 0; 
       0 0 -1 0.8; 
       0 0 0 1];
-q0 = [0 0 0 0 0 0 0]';
+q0 = [0.1 0.1 0 0 0 0 0]';
 [q_inverse, idx_inverse, e_inverse] = J_inverse_kinematics(panda, Ti, Tf, q0, 200);
 Jb = J_body(panda, q);
+
 
 % J_transpose_kinematics
 % NOTE!! The Lyapunov method using J_transpose takes significantly long
@@ -92,4 +93,6 @@ title('J transpose')
 % figure
 % show(panda_matlab, [q;0;0]);
 
-
+% redudancy resolution
+K = [1 1 1 1 1 1 1]';
+[q, idx, e] = redundancy_resolution(panda, Ti, Tf, q0, 200, K);
