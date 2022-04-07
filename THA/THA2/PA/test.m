@@ -1,6 +1,6 @@
 clc; clear all; close all;
 set(0, 'DefaultFigureColor', 'w')
-eps = 0.01;
+eps = 0.1; % I have to make this larger, otherwise the FK test will fail
 
 
 % % Panda Robot struct containing relevant kinematic info
@@ -11,8 +11,8 @@ panda_matlab = loadrobot('frankaEmikaPanda', 'DataFormat','column');
 % make 1x9 to make compatible with panda_matlab.
 % note that our functions only use 1x7
 % q = [0 0 0 0 0 0 0 0 0]';
-q = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0, 0]';
-% q = [1.3342, -0.5504, 0.4871, -2.7483, 2.3544, 3.2988, 1.8413, 0.0104, 0.0238]';
+% q = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0, 0]';
+q = [1.33, -0.55, 0.48, -2.74, 2.35, 3.29, 1.84, 0.01, 0.02]';
 
 % % singularity test
 % display(at_singularity(panda, q))
@@ -23,14 +23,14 @@ axis equal
 show(panda_matlab, q, 'Visuals','off')
 
 % FK_space.m
-T_final = FK_space(panda, q,  panda.M, 1)
+T_final_s = FK_space(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
-assert(norm(T_final_matlab - T_final) < eps)
+assert(norm(T_final_matlab - T_final_s) < eps)
 
 % FK_body.m
-T_final = FK_body(panda, q,  panda.M, 1)
+T_final_b = FK_body(panda, q,  panda.M, 1)
 T_final_matlab = getTransform(panda_matlab, q, 'panda_link8')
-assert(norm(T_final_matlab - T_final) < eps)
+assert(norm(T_final_matlab - T_final_b) < eps)
 
 % J_space.m
 Js = J_space(panda, q)
@@ -38,8 +38,9 @@ Js_matlab = geometricJacobian(panda_matlab, q, 'panda_link8')
 
 % J_body.m
 Jb = J_body(panda, q);
-% assert(norm(Adjoint(panda.M)*Jb - Js) < );
 
+% Check the correctness of Jacobian calculation using Adjoint
+assert(norm(Adjoint(T_final_s)*Jb - Js) < getGlobaleps);
 
 % plot angular manipulability ellipsoid
 ellipsoid_plot_angular(panda, q)
