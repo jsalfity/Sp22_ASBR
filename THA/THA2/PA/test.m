@@ -123,4 +123,3 @@ for n_test = 1:5
     Tf_rr = FK_space(panda, q_rr, Ti, 0);
     assert(norm(Tf_matlab - Tf_rr) < eps)
 end
-
