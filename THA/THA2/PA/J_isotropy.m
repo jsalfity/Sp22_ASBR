@@ -1,5 +1,5 @@
 function [mu1] = J_isotropy(A)
-%J_isotropy Calculates the isotropy, a single scalar mesasure, defining how
+%J_isotropy Calculates the isotropy, a single scalar measure, defining how
 %easily the robot can move at a given posture
 %   param: A (3x3 matrix, usually calculated like:
 %                         Js = J_space(robot, input_thetas);

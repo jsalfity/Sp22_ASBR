@@ -2,13 +2,13 @@ function [T] = FK_body(robot, q, init_pose, viz)
 %FK_body calculates the forward kinematics with matrix exponential in body
 % frame
 %   param: robot (struct with n_joints, M, screw_axes, qs)
-%   param: q (1xn) joint angle array)
+%   param: q (1xn) joint angle array
 %   param: init_pose (initial position of the end effector)
 %   param: viz (bool) visualization flag
 %   return: T_final
 
 %   reference: MR 4.1.3
-    
+
     % perform space form of exponential products
     % iterate through list in reverse
     T = init_pose;
@@ -71,7 +71,7 @@ function [T] = FK_body(robot, q, init_pose, viz)
                                   (0.1*[0 R_t(2,3)]+P_y), ...
                                   (0.1*[0 R_t(3,3)]+P_z), ...
                                     'Color', 'b', 'LineWidth', 2);
-            
+
             % plot link from last [P_x, P_y, P_z]
             line([last_X P_x], [last_Y P_y], [last_Z P_z]);
             last_X = P_x;
