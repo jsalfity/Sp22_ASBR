@@ -1,5 +1,5 @@
 function [mu2] = J_condition(A)
-%J_condition Calculates the condition number, a single scalar mesasure, 
+%J_condition Calculates the condition number, a single scalar measure, 
 % defining the sensitivity of the matrix A to scaling errors
 %   param: A (3x3 matrix, usually calculated like:
 %                         Js = J_space(robot, input_thetas);
