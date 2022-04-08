@@ -64,6 +64,7 @@ for n_test = 1:5
     qf = randomConfiguration(panda_matlab);
     Tf_matlab = getTransform(panda_matlab, qf, 'panda_link8');
 
+    % J_inverse_kinematics
     [q_inverse, idx_inverse, e_inverse] = J_inverse_kinematics(panda, Ti, ...
                                                                 Tf_matlab, ...
                                                                 q0, 200);
@@ -113,5 +114,13 @@ for n_test = 1:5
     ylabel('error norm')
     title('J transpose')
 
+    % REDUDANCY RESOLUTION
+    [q_rr, idx_rr, e_rr] = redundancy_resolution(panda, Ti, Tf_matlab, ...
+                                                 q0, 200, eye(7));
+
+    % q_inverse will not always be qf
+    % but Tf should be Tf_matlab
+    Tf_rr = FK_space(panda, q_rr, Ti, 0);
+    assert(norm(Tf_matlab - Tf_rr) < eps)
 end
 

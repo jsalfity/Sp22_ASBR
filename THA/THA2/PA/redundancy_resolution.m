@@ -45,7 +45,7 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
         delta_theta = pinv(Jb)*V_b + ...
                       (eye(robot.n_joints) - pinv(Jb)*Jb) * dot_q;
         q = q + delta_theta;
-        
+
         T_bd = FK_body(robot, q, Ti, 0) \  T_sd;
 
         V_b_skew = logm(T_bd);
@@ -58,8 +58,10 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
         q_previous = q;
 
         idx = idx + 1;
-     
+
         e(1,idx+1) = norm(v) + norm(omega);
+        linear_volume = J_ellipsoid_volume(Jb(4:6,:)*Jb(4:6,:)')
+        angular_volume = J_ellipsoid_volume(Jb(1:3,:)*Jb(1:3,:)')
 
     end
 end
