@@ -3,7 +3,7 @@ function [q, idx, e] = J_inverse_kinematics(robot, Ti, Tf, q0, max_iterations)
 %   param: robot (struct with n_joints, M, screw_axes, qs)
 %   param: Ti   (Initial Transformation)
 %   param: Tf   (Final Transformation)
-%   param: theta0
+%   param: q0
 
 %   reference: MR 6.2.2
 
@@ -18,7 +18,7 @@ function [q, idx, e] = J_inverse_kinematics(robot, Ti, Tf, q0, max_iterations)
     v = V_b(4:6);
 
     idx = 0;
-    
+
     e = zeros(1,max_iterations+1);
 
     while (norm(omega) > getGlobaleps ...
@@ -35,7 +35,7 @@ function [q, idx, e] = J_inverse_kinematics(robot, Ti, Tf, q0, max_iterations)
         v = V_b(4:6);
 
         idx = idx + 1;
-        
+
         e(1,idx+1) = norm(v) + norm(omega);
     end
 end
