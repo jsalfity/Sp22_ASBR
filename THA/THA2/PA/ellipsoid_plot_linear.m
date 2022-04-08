@@ -1,13 +1,14 @@
-function [isotropy, condition, volume] = ellipsoid_plot_linear(robot, input_thetas)
+function [isotropy, condition, volume] = ellipsoid_plot_linear(robot, q, verbose)
 %ellipsoid_plot_linear
 %   param: robot (struct with n_joints, M, screw_axes, qs)
-%   param: thetas (1xn) joints array
+%   param: q (1xn) joints array
+%   param: verbose (bool) to report the ellipsoid metrics
 %   return: isotropy, condition, volume (floats)
 
 %   reference: MR 5.4
 
     % calculate J_body
-    Jb = J_body(robot, input_thetas);
+    Jb = J_body(robot, q);
     A = Jb(4:6,:)*Jb(4:6,:)';
     [V, D] = eig(A);
 
@@ -35,5 +36,12 @@ function [isotropy, condition, volume] = ellipsoid_plot_linear(robot, input_thet
     xlabel('v_1');
     ylabel('v_2');
     zlabel('v_3');
+    title("Linear Manipulability Ellpsoid")
+
+    if verbose
+        volume = J_ellipsoid_volume(A)
+        isotropy = J_isotropy(A)
+        condition = J_condition(A)
+    end
 
 end

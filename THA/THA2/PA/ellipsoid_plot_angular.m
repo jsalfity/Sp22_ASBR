@@ -1,13 +1,14 @@
-function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, input_thetas)
+function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, q, verbose)
 %ellipsoid_plot_angular
 %   param: robot (struct with n_joints, M, screw_axes, qs)
-%   param: thetas (1xn) joints array
+%   param: q (1xn) joints array
+%   param: verbose (bool) to report the ellipsoid metrics
 %   return: isotropy, condition, volume (floats)
 
 %   reference: MR 5.4
 
     % calculate J_space
-    Js = J_space(robot, input_thetas);
+    Js = J_space(robot, q);
     A = Js(1:3,:)*Js(1:3,:)';
     [V, D] = eig(A);
 
@@ -35,5 +36,12 @@ function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, input_the
     xlabel('\omega_1');
     ylabel('\omega_2');
     zlabel('\omega_3');
+    title("Angular Manipulability Ellpsoid")
+
+    if verbose
+        volume = J_ellipsoid_volume(A)
+        isotropy = J_isotropy(A)
+        condition = J_condition(A)
+    end
 
 end
