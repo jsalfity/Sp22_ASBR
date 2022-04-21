@@ -27,7 +27,8 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
     e = zeros(1, max_iterations+1);
 
     w_previous = 0;
-    q_previous = 0;
+    q_previous = zeros(robot.n_joints,1);
+    q = [q0];
     while (norm(omega) > getGlobaleps ...
           || norm(v) > getGlobaleps)  ...
           && idx < max_iterations
@@ -38,13 +39,13 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
 
         % manipulabilty calculations
         w = sqrt(det(A));
-        dwdq = (w - w_previous) / (q - q_previous);
+        dwdq = (w - w_previous) / (q(:,end) - q_previous);
         dot_q = K * (dwdq');
 
         % update equation
         delta_theta = pinv(Jb)*V_b + ...
                       (eye(robot.n_joints) - pinv(Jb)*Jb) * dot_q;
-        q = q + delta_theta;
+        q = [q q(:, end) + delta_theta];
 
         T_bd = FK_body(robot, q, Ti, 0) \  T_sd;
 
@@ -55,13 +56,13 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
 
         % store manipulability measure for dw/dq calculation
         w_previous = w;
-        q_previous = q;
+        q_previous = q(:,end);
 
         idx = idx + 1;
 
         e(1,idx+1) = norm(v) + norm(omega);
-        linear_volume = J_ellipsoid_volume(Jb(4:6,:)*Jb(4:6,:)')
-        angular_volume = J_ellipsoid_volume(Jb(1:3,:)*Jb(1:3,:)')
+        linear_volume = J_ellipsoid_volume(Jb(4:6,:)*Jb(4:6,:)');
+        angular_volume = J_ellipsoid_volume(Jb(1:3,:)*Jb(1:3,:)');
 
     end
 end
