@@ -13,7 +13,7 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
 %   reference: ASBR W10L1
 
     % initialization
-    q = q0;
+    q = [q0];
     T_sd = Tf;         % Desired configuration in space frame
     T_bd = FK_body(robot, q, Ti, 0) \  T_sd; % Desired configuraiton in body frame
 
@@ -27,27 +27,30 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
     e = zeros(1, max_iterations+1);
 
     w_previous = 0;
-    q_previous = zeros(robot.n_joints,1);
-    q = [q0];
     while (norm(omega) > getGlobaleps ...
           || norm(v) > getGlobaleps)  ...
           && idx < max_iterations
 
         % calculate useful quantities to be used in update equation
-        Jb = J_body(robot, q);
+        Jb = J_body(robot, q(:,end));
         A = Jb * Jb';
 
         % manipulabilty calculations
         w = sqrt(det(A));
-        dwdq = (w - w_previous) / (q(:,end) - q_previous);
-        dot_q = K * (dwdq');
+        if size(q,2) < 2
+            % first iteration shouldn't divide by zero
+            dot_q = zeros(1,robot.n_joints)';
+        else
+            dwdq = (w - w_previous) / (q(:,end) - q(:,end-1));
+            dot_q = K * (dwdq');
+        end
 
         % update equation
         delta_theta = pinv(Jb)*V_b + ...
                       (eye(robot.n_joints) - pinv(Jb)*Jb) * dot_q;
         q = [q q(:, end) + delta_theta];
 
-        T_bd = FK_body(robot, q, Ti, 0) \  T_sd;
+        T_bd = FK_body(robot, q(:, end), Ti, 0) \  T_sd;
 
         V_b_skew = logm(T_bd);
         V_b = vector_from_skew(V_b_skew);
@@ -56,7 +59,6 @@ function [q, idx, e] = redundancy_resolution(robot, Ti, Tf, q0, max_iterations, 
 
         % store manipulability measure for dw/dq calculation
         w_previous = w;
-        q_previous = q(:,end);
 
         idx = idx + 1;
 
