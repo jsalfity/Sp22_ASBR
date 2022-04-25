@@ -1,4 +1,9 @@
 function T = point_registration(A,B)
+% input:    A  point cloud
+%           B  point cloud
+% output:   T transformation matrix between two point clouds
+% Reference: lecture W10-L2
+
 % Sizes of A and B are 3*N
 
 N = size(A,2); % number of points in the point cloud
