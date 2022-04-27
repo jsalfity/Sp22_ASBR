@@ -1,4 +1,6 @@
-function [isotropy, condition, volume] = ellipsoid_plot_linear(robot, q, verbose)
+function [isotropy, condition, volume] = ellipsoid_plot_linear(robot, q, ...
+                                                                verbose, ...
+                                                                figure_num)
 %ellipsoid_plot_linear
 %   param: robot (struct with n_joints, M, screw_axes, qs)
 %   param: q (1xn) joints array
@@ -22,7 +24,7 @@ function [isotropy, condition, volume] = ellipsoid_plot_linear(robot, q, verbose
     % rotation comes from eigenvectors
     [phi, theta, psi] = rotation_2_rpy(V, 0);
 
-    figure
+    figure(figure_num)
     hsurf = surf(X, Y, Z);
     axis equal
 
@@ -36,12 +38,20 @@ function [isotropy, condition, volume] = ellipsoid_plot_linear(robot, q, verbose
     xlabel('v_1');
     ylabel('v_2');
     zlabel('v_3');
+
+    txt_isotropy = ['isotropy: ' num2str(isotropy)];
+    text(1, 1, txt_isotropy)
+    txt_condition = ['condition: ' num2str(condition)];
+    text(1, 2, txt_condition)
+    txt_volume = ['volume: ' num2str(volume)];
+    text(1, 3, txt_volume)
+
     title("Linear Manipulability Ellpsoid")
 
     if verbose
-        volume = J_ellipsoid_volume(A)
-        isotropy = J_isotropy(A)
-        condition = J_condition(A)
+        volume
+        isotropy
+        condition
     end
 
 end

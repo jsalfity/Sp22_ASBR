@@ -1,4 +1,6 @@
-function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, q, verbose)
+function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, q, ...
+                                                                verbose, ...
+                                                                figure_num)
 %ellipsoid_plot_angular
 %   param: robot (struct with n_joints, M, screw_axes, qs)
 %   param: q (1xn) joints array
@@ -22,7 +24,7 @@ function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, q, verbos
     % rotation comes from eigenvectors
     [phi, theta, psi] = rotation_2_rpy(V, 0);
 
-    figure
+    figure(figure_num)
     hsurf = surf(X, Y, Z);
     axis equal
 
@@ -36,12 +38,20 @@ function [isotropy, condition, volume] = ellipsoid_plot_angular(robot, q, verbos
     xlabel('\omega_1');
     ylabel('\omega_2');
     zlabel('\omega_3');
+    
+    txt_isotropy = ['isotropy: ' num2str(isotropy)];
+    text(3, 1, txt_isotropy)
+    txt_condition = ['condition: ' num2str(condition)];
+    text(3, 2, txt_condition)
+    txt_volume = ['volume: ' num2str(volume)];
+    text(3, 3, txt_volume)
+
     title("Angular Manipulability Ellpsoid")
 
     if verbose
-        volume = J_ellipsoid_volume(A)
-        isotropy = J_isotropy(A)
-        condition = J_condition(A)
+        volume
+        isotropy
+        condition
     end
 
 end
