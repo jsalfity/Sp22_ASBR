@@ -27,9 +27,12 @@ q1 = V(2,end);
 q2 = V(3,end);
 q3 = V(4,end);
 
-R = [q0^2+q1^2-q2^2-q3^2 2*(q1*q2-q0*q3) 2*(q1*q3+q0*q2);
-    2*(q1*q2+q0*q3) q0^2-q1^2+q2^2-q3^2 2*(q2*q3-q0*q1);
-    2*(q1*q3-q0*q2) 2*(q1*q3+q0*q1) q0^2-q1^2-q2^2+q3^2];
+q(1) = q0;
+q(2) = q1;
+q(3) = q2;
+q(4) = q3;
+
+R = quaternion_2_rotation(q);
 
 p = b_avg - R*a_avg;
 
