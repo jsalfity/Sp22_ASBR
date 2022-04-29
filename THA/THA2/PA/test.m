@@ -62,7 +62,7 @@ for n_test = 1:5
       0 0 0 1];
 
     qf = randomConfiguration(panda_matlab);
-    Tf_matlab = getTransform(panda_matlab, qf, 'panda_link8');
+    Tf_matlab = getTransform(panda_matlab, qf, 'panda_link8')
 
     % J_inverse_kinematics
     [q_inverse, idx_inverse, e_inverse] = J_inverse_kinematics(panda, Ti, ...
