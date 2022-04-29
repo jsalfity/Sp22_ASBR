@@ -20,18 +20,33 @@ function [R_x, p_x, T_x] = handeye_transform(qA, pA, qB, pB)
         assert
     end
 
-
     n_observations = size(qA, 1);
 
+    % build S1*inv(S2) inv(E1)*E2
+    qE12 = [];
+    qS12 = [];
+    for n = 1:n_observations-1
+        R_E1 = quat2rotm(qA(n, :));
+        R_E2 = quat2rotm(qA(n+1, :));
+        qE12 = [qE12;
+                rotm2quat(R_E1'*R_E2)];
+
+        R_S1 = quat2rotm(qB(n, :));
+        R_S2 = quat2rotm(qB(n+1, :));
+        qS12 = [qS12;
+                rotm2quat(R_S1*R_S2')];
+        
+    end
+    
     M = [];
-    for n = 1:n_observations
+    for n = 1:n_observations-1
 
         % grab info
-        sA = qA(n, 1);
-        vA = qA(n, 2:end)';     % transpose to column vector
+        sA = qE12(n, 1);
+        vA = qE12(n, 2:end)';     % transpose to column vector
 
-        sB = qB(n, 1);
-        vB = qB(n, 2:end)';     % transpose to column vector
+        sB = qS12(n, 1);
+        vB = qS12(n, 2:end)';     % transpose to column vector
 
         % build M_qAqB
         M_qAqB = zeros(4);
@@ -47,16 +62,16 @@ function [R_x, p_x, T_x] = handeye_transform(qA, pA, qB, pB)
 
     % quaternion is 4th column of e-vector
     [U, S, V] = svd(M);
-    q_x = V(:,4);
-    R_x = quaternion_2_rotation(q_x);
+    q_x = transpose(V(:,4));
+    R_x = quat2rotm(q_x);
 
     % least squares, solving Ax = b
-    A = zeros(3*n_observations, 3);
+    A = zeros(3*n_observations, 3);V
     b = zeros(3*n_observations, 1);
     for n = 1:n_observations
 
         idx = 3*(n-1)+1;
-        A(idx:(idx+2), 1:3) = quaternion_2_rotation(qA(n,:))-eye(3);
+        A(idx:(idx+2), 1:3) = quat2rotm(qA(n,:))-eye(3);
 
         vA = qA(n, 2:end)';     % transpose to column vector
         vB = qB(n, 2:end)';     % transpose to column vector
