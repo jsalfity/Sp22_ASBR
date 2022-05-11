@@ -26,23 +26,21 @@ run('make_panda.m')
 % initial pose
 p_goal = [0.06;0;0.826];
 
-% PA 1a
+%% PA 1a
 p_tip = [0 0 0.1 1]';
 zeta = 1;
 eta = 1;
-q_delta = tool_tip_near_point(panda_matlab, p_tip, p_goal, ...
-                              q_init, q_ub, q_lb, tol);
+q_delta = tool_tip_near_point(p_tip, p_goal, q_init, q_ub, q_lb, tol);
 q_new = q_init+q_delta;
 T_robot = FK_space(panda, q_new,  panda.M, 1);
 % T_robot = getTransform(panda_matlab, q_robot, 'panda_link8');
 % T_robot = FK_space(panda, q_robot, panda.M, 0);
 T_tip = T_robot * p_tip;
 
-T_tip 
-p_goal
+dis_error_1 = sqrt((T_tip(1)-p_goal(1))^2+(T_tip(2)-p_goal(2))^2+(T_tip(3)-p_goal(3))^2);
 
-dis_error = sqrt((T_tip(1)-p_goal(1))^2+(T_tip(2)-p_goal(2))^2+(T_tip(3)-p_goal(3))^2)
-
+disp(['Distance between the transformed tip to the goal point is ',...
+    num2str(dis_error_1)])
 
 % Plot the tip position after tranformation and the allowed region
 % Make unit sphere
@@ -64,6 +62,43 @@ ylabel('Y', 'FontSize', 20);
 zlabel('Z', 'FontSize', 20);
 axis equal;
 
+%% PA 1b
+% Weights
+w_p = 100*eye(3); % Weights for position
+w_a = eye(3); % Weights for orientation
+
+p_tip = [0 0 0.1 1]';
+zeta = 1;
+eta = 1;
+q_delta = min_orientation_change(p_tip, p_goal, q_init, q_ub, q_lb, tol, w_p, w_a);
+q_new = q_init+q_delta;
+T_robot = FK_space(panda, q_new,  panda.M, 1);
+T_tip = T_robot * p_tip;
+
+dis_error_2 = sqrt((T_tip(1)-p_goal(1))^2+(T_tip(2)-p_goal(2))^2+(T_tip(3)-p_goal(3))^2);
+
+disp(['Distance between the transformed tip to the goal point is ',...
+    num2str(dis_error_2)])
+
+% Plot the tip position after tranformation and the allowed region
+% Make unit sphere
+[x,y,z] = sphere;
+% Scale to desire radius.
+radius = tol;
+x = x * radius;
+y = y * radius;
+z = z * radius;
+% Plot as surface.
+figure
+surf(x+p_goal(1),y+p_goal(2),z+p_goal(3)) 
+hold on
+plot3(T_tip(1),T_tip(2),T_tip(3),'ro')
+
+% Label axes.
+xlabel('X', 'FontSize', 20);
+ylabel('Y', 'FontSize', 20);
+zlabel('Z', 'FontSize', 20);
+axis equal;
 
 % % plot panda_matlab robot
 % figure
