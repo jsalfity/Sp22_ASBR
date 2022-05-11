@@ -1,6 +1,7 @@
-function [q_delta] = tool_tip_near_point(p_tip, p_goal, q_init, ...
+function [q_delta] = tool_tip_near_point_min_eng(p_tip, p_goal, q_init, ...
     q_ub, q_lb, tol)
 % tool_tip_near_point Place robot and new tool tip near point p_gal
+% The objective for this function is to minimize the joint energy
 %   param p_tip: new tool tip
 %   param p_goal: goal tool tip
 %   param q_init: initial joint configuration
@@ -56,7 +57,7 @@ b = tol * ones(m, 1) - A*d;
 %         C = [sqrt(zeta)*C; sqrt(eta)*-vec_2_skew_mat(R(:,3))*J(1:3, :)];
 %         d = [sqrt(zeta)*d; sqrt(eta)*zeros(3, 1)];
 
-q_delta = lsqlin(C, -d, A*C, b, [], [], q_lb-q_curr, q_ub-q_curr);
+q_delta = lsqlin(eye(7), zeros(7,1), A*C, b, [], [], q_lb-q_curr, q_ub-q_curr);
 
 % i'm not sure whats causing this error??
 % if size(q_delta, 1) ~= 9

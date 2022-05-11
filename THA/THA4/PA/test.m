@@ -21,7 +21,10 @@ T_rand = getTransform(panda_matlab, ...
                       'panda_link8');
 run('make_panda.m')
 % p_goal = T_rand(1:3, 4);
-p_goal = [0.08;0;0.826];
+
+% This has to be manually defined, because it has to be very close to the
+% initial pose
+p_goal = [0.06;0;0.826];
 
 % PA 1a
 p_tip = [0 0 0.1 1]';
