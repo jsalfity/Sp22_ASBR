@@ -1,5 +1,5 @@
-function [q_curr] = tool_tip_near_point(p_tip, p_goal, q_init, ...
-    q_ub, q_lb, tol)
+function [q_delta] = min_orientation_change(p_tip, p_goal, q_init, ...
+    q_ub, q_lb, tol, w_p, w_a)
 % tool_tip_near_point Place robot and new tool tip near point p_gal
 %   param p_tip: new tool tip
 %   param p_goal: goal tool tip
@@ -7,6 +7,8 @@ function [q_curr] = tool_tip_near_point(p_tip, p_goal, q_init, ...
 %   param q_ub: upper bound for joint limit
 %   param q_lb: lower bound for joint limit
 %   param tol: tolerance to keep the tip within
+%   param w_p: weight for position matching
+%   param w_a: weight for orientation-change minimization
 
 %   return q_delta: joint command
 
@@ -25,7 +27,7 @@ for i=1:m
 end
 
 while error >= tol
-    figure(1)
+    figure(2)
 %     plot3(p_goal(1),p_goal(2),p_goal(3),'rx','LineWidth',8)
     show(robot, [q_init;0;0])
 %     hold on
@@ -39,7 +41,8 @@ while error >= tol
     J_alpha = J(1:3, :);    % rotational
     J_eps = J(4:6, :);      % translation
     
-    C = -vec_2_skew_mat(t)*J_alpha + J_eps;
+    C1 = -vec_2_skew_mat(t)*J_alpha + J_eps;
+    C2 = -vec_2_skew_mat(R*[0;0;1])*J_alpha;
     d = (t - p_goal); % negative to account for ||Cx - d||
 
     d = [d;0;0;0];
@@ -47,7 +50,7 @@ while error >= tol
     b = tol * ones(m, 1) - A*d;
     
     options = optimoptions('lsqlin','Algorithm','active-set','MaxIterations',2000,'TolCon',1e-20);
-    q_delta = lsqlin(C, -d(1:3), A*J, b, [], [], q_lb-q_init, q_ub-q_init,zeros(7,1),options);
+    q_delta = lsqlin(w_p*C1+w_a*C2, -w_p*d(1:3), A*J, b, [], [], q_lb-q_init, q_ub-q_init,zeros(7,1),options);
     
     q_init = q_init+q_delta;
     T_robot = FK_space(panda, q_init,  panda.M, 0);
