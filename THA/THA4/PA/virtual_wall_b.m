@@ -1,5 +1,5 @@
-function [q_curr,orientation,tip_pos_all] = tool_tip_near_point(p_tip, p_goal, q_init, ...
-    q_ub, q_lb, tol)
+function [q_curr,tip_pos_all] = virtual_wall_b(p_tip, p_goal, q_init, ...
+    q_ub, q_lb, tol,n_vec,wall_loc,d_wall, w_p, w_a)
 % tool_tip_near_point Place robot and new tool tip near point p_gal
 %   param p_tip: new tool tip
 %   param p_goal: goal tool tip
@@ -7,9 +7,10 @@ function [q_curr,orientation,tip_pos_all] = tool_tip_near_point(p_tip, p_goal, q
 %   param q_ub: upper bound for joint limit
 %   param q_lb: lower bound for joint limit
 %   param tol: tolerance to keep the tip within
+%   param n: normal vector of the virtual wall
+%   param d: minimum distance from the virtual wall
 
 %   return q_delta: joint command
-%   return orientation: change of tip orientation
 
 %   reference: ASBR W16 L1-L2
 
@@ -26,53 +27,61 @@ for i=1:m
     A = [A; [cos(i*2*pi/n)*cos(i*2*pi/m) cos(i*2*pi/n)*sin(i*2*pi/m) sin(i*2*pi/n) 0 0 0]];
 end
 
-% Plot the virtual wall
-n_vec = [0 0 1];
-wall_loc = [0;0;0.45];
-
-orientation = [];
+i = 1;
 
 while error >= tol
     figure(1)
+%     plot3(p_goal(1),p_goal(2),p_goal(3),'rx','LineWidth',8)
     show(robot, [q_init;0;0])
-    % Tranformation matrix at the current pose
+%     hold on
     T_robot = FK_space(panda, q_init,  panda.M, 0);
     R = T_robot(1:3, 1:3);
     t = T_robot * p_tip;
     t = t(1:3);
-    % space jacobian at the current pose
-    J = J_space(panda, q_init);
-
-    J_alpha = J(1:3, :);    % rotational
-    J_eps = J(4:6, :);      % translation
     
-    % Distance between the new tool tip and goal
-    C = -vec_2_skew_mat(t)*J_alpha + J_eps;
+    J_s = J_space(panda, q_init);
+
+    J_alpha = J_s(1:3, :);    % rotational
+    J_eps = J_s(4:6, :);      % translation
+    
+    C1 = -vec_2_skew_mat(t)*J_alpha + J_eps;
+    C2 = -vec_2_skew_mat(R*[0;0;1])*J_alpha;
+
     d = (t - p_goal);
 
     d = [d;0;0;0];
-    
-    % From polygon approximation
+
     b = tol * ones(m, 1) - A*d;
+
+    J_b = J_body(panda, q_init);
+
+    J_alpha = J_b(1:3, :);    % rotational
+    J_eps = J_b(4:6, :);      % translation
+    
+    p_tip = [0;0;0.1;1];
+    t_new = T_robot*p_tip;
+    t_new = t_new(1:3);
+    b2 = -(d_wall+n_vec*wall_loc-n_vec*t_new);
+    A2 = -n_vec*R*(-vec_2_skew_mat([0;0;0.1])*J_alpha + J_eps);
+
+    A_ = [A*J_s;A2];
+    B = [b;b2];
     
     options = optimoptions('lsqlin','Algorithm','active-set','MaxIterations',2000,'TolCon',1e-08);
-    q_delta = lsqlin(C, -d(1:3), A*J, b, [], [], q_lb-q_init, q_ub-q_init,zeros(7,1),options);
+    q_delta = lsqlin([w_p*C1;w_a*C2], [-w_p*d(1:3);0;0;0], A_, B, [], [], q_lb-q_init, q_ub-q_init,zeros(7,1),options);
     
     q_init = q_init+q_delta;
     T_robot = FK_space(panda, q_init,  panda.M, 0);
     T_tip = T_robot * p_tip;
     error = norm(T_tip(1:3)-p_goal);
-    tip_pos_all = [tip_pos_all,T_tip(1:3)];
-
     i = i+1;
-    if i>=10000
+    if i>=100
         break
     end
-
+    tip_pos_all = [tip_pos_all,T_tip(1:3)];
+%     show(panda_matlab, [q_init;0;0])
+%     hold on
     pause(0.01)
-
-    C2 = -vec_2_skew_mat(R*[0;0;1])*J_alpha;
-    orientation = [orientation;norm(C2*q_delta)];
 end
 
 hold on

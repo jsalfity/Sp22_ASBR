@@ -1,4 +1,4 @@
-function [q_delta,orientation] = min_orientation_change(p_tip, p_goal, q_init, ...
+function [q_curr,orientation] = min_orientation_change(p_tip, p_goal, q_init, ...
     q_ub, q_lb, tol, w_p, w_a)
 % tool_tip_near_point Place robot and new tool tip near point p_gal
 %   param p_tip: new tool tip
@@ -55,7 +55,7 @@ while error >= tol
     % From polygon approximation
     b = tol * ones(m, 1) - A*d;
     
-    options = optimoptions('lsqlin','Algorithm','active-set','MaxIterations',2000,'TolCon',1e-20);
+    options = optimoptions('lsqlin','Algorithm','active-set','MaxIterations',2000,'TolCon',1e-08);
     q_delta = lsqlin([w_p*C1;w_a*C2], [-w_p*d(1:3);0;0;0], A*J, b, [], [], q_lb-q_init, q_ub-q_init,zeros(7,1),options);
     
     q_init = q_init+q_delta;
